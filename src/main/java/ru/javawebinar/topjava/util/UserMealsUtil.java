@@ -57,10 +57,7 @@ public class UserMealsUtil {
         meals.forEach(meal -> {
             sumCaloriesPerDay.merge(meal.getDateTime().toLocalDate(), meal.getCalories(), Integer::sum);
 
-            boolean[] excesses = {false};
-            if (excessesPerDay.containsKey(meal.getDateTime().toLocalDate())) {
-                excesses = excessesPerDay.get(meal.getDateTime().toLocalDate());
-            }
+            boolean[] excesses = excessesPerDay.getOrDefault(meal.getDateTime().toLocalDate(), new boolean[]{false});
             if (sumCaloriesPerDay.get(meal.getDateTime().toLocalDate()) > caloriesPerDay) {
                 excesses[0] = true;
             }
