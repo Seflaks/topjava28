@@ -17,8 +17,10 @@ public class MealStorageMemory implements MealStorage {
 
     @Override
     public void create(Meal meal) {
-        counter++;
-        meal.setId(counter);
+        if (meal.getId() == 0) {
+            counter++;
+            meal.setId(counter);
+        }
         storage.put(meal.getId(), meal);
     }
 
