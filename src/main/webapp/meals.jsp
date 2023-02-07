@@ -16,7 +16,7 @@
     </tr>
     <c:forEach var="mealTo" items="${requestScope.mealsTo}" >
         <tr style = "color:${mealTo.excess ? "red" : "green"};">
-            <td>${mealTo.dateTime}</td>
+            <td>${mealTo.dateTime.toLocalDate()} ${mealTo.dateTime.toLocalTime()}</td>
             <td>${mealTo.description}</td>
             <td>${mealTo.calories}</td>
         </tr>
