@@ -12,21 +12,17 @@ public class MealStorageMemory implements MealStorage {
     private int counter = 0;
 
     {
-        MealsUtil.meals.forEach(this::create);
+        MealsUtil.meals.forEach(this::save);
     }
 
     @Override
-    public void create(Meal meal) {
-        if (meal.getId() == 0) {
+    public Meal save(Meal meal) {
+        if (meal.getId() == null) {
             counter++;
             meal.setId(counter);
         }
         storage.put(meal.getId(), meal);
-    }
-
-    @Override
-    public void update(Meal meal) {
-        storage.put(meal.getId(), meal);
+        return meal;
     }
 
     @Override

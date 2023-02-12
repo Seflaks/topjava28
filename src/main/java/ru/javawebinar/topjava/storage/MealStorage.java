@@ -6,8 +6,7 @@ import java.util.Collection;
 import java.util.Map;
 
 public interface MealStorage {
-    void create(Meal meal);
-    void update(Meal meal);
+    Meal save(Meal meal);
     void delete(int id);
     Meal read(int id);
     Collection<Meal> readAll();

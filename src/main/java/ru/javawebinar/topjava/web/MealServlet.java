@@ -31,12 +31,12 @@ public class MealServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         String id = request.getParameter("id");
-        Meal meal = new Meal(id.equals("") ? 0 : Integer.parseInt(id),
-                            LocalDateTime.parse(request.getParameter("dateTime")),
-                            request.getParameter("description"),
-                            Integer.parseInt(request.getParameter("calories"))
-                            );
-        storage.create(meal);
+        Meal meal = new Meal(id.equals("") ? null : Integer.parseInt(id),
+                LocalDateTime.parse(request.getParameter("dateTime")),
+                request.getParameter("description"),
+                Integer.parseInt(request.getParameter("calories"))
+        );
+        storage.save(meal);
         response.sendRedirect("meals");
     }
 
@@ -49,9 +49,9 @@ public class MealServlet extends HttpServlet {
             request.setAttribute("mealsTo", MealsUtil.getListMealTo(storage.readAll(), MealsUtil.CALORIES_PER_DAY_LIMIT));
             request.getRequestDispatcher("/meals.jsp").forward(request, response);
         } else if (action.equals("delete")) {
-                int id = Integer.parseInt(Objects.requireNonNull(request.getParameter("id")));
-                storage.delete(id);
-                response.sendRedirect("meals");
+            int id = Integer.parseInt(Objects.requireNonNull(request.getParameter("id")));
+            storage.delete(id);
+            response.sendRedirect("meals");
         } else if (action.equals("update")) {
             request.setAttribute("meal", storage.read(Integer.parseInt(request.getParameter("id"))));
             request.getRequestDispatcher("/mealsEdit.jsp").forward(request, response);
