@@ -14,7 +14,7 @@
       <p>Выберите дату: <input type="datetime-local" value="${meal.dateTime}" name="dateTime"></p>
       <p>Описание: <input type="text" value="${meal.description}" name="description"></p>
       <p>Калории: <input type="number" value="${meal.calories}" name="calories"></p>
-      <p><input type="submit" value="Отправить"></p>
+      <p><input type="submit" value="Отправить"><input type="reset" value="Сбросить"><button onclick="window.history.back()" type="button">Назад</button></p>
       </fieldset>
   </form>
 </body>

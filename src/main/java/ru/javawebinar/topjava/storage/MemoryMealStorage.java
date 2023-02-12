@@ -6,10 +6,12 @@ import ru.javawebinar.topjava.util.MealsUtil;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class MealStorageMemory implements MealStorage {
-    private Map<Integer, Meal> storage = new HashMap<>();
-    private int counter = 0;
+public class MemoryMealStorage implements MealStorage {
+    private Map<Integer, Meal> storage = new ConcurrentHashMap<>();
+    private final AtomicInteger counter = new AtomicInteger(0);
 
     {
         MealsUtil.meals.forEach(this::save);
@@ -18,20 +20,19 @@ public class MealStorageMemory implements MealStorage {
     @Override
     public Meal save(Meal meal) {
         if (meal.getId() == null) {
-            counter++;
-            meal.setId(counter);
+            meal.setId(counter.incrementAndGet());
         }
         storage.put(meal.getId(), meal);
         return meal;
     }
 
     @Override
-    public void delete(int id) {
-        storage.remove(id);
+    public boolean delete(int id) {
+        return storage.remove(id) != null;
     }
 
     @Override
-    public Meal read(int id) {
+    public Meal get(int id) {
         return storage.get(id);
     }
 
