@@ -1,11 +1,12 @@
 package ru.javawebinar.topjava.repository.inmemory;
 
 import org.springframework.stereotype.Repository;
-import org.springframework.util.CollectionUtils;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
+import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -43,6 +44,16 @@ public class InMemoryMealRepository implements MealRepository {
     public Meal get(int id, int userId) {
         Map<Integer, Meal> meals = repository.get(userId);
         return meals == null ? null : meals.get(id);
+    }
+
+    @Override
+    public List<Meal> getBetweenHalfOpen(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId) {
+        Map<Integer, Meal> meals = repository.get(userId);
+        return meals == null ? new ArrayList<>() :
+                repository.get(userId).values().stream()
+                        .filter(meal -> DateTimeUtil.isBetweenHalfOpenDT(meal.getDateTime(), startDateTime, endDateTime))
+                        .sorted(Comparator.comparing(Meal::getDateTime).reversed())
+                        .collect(Collectors.toList());
     }
 
     @Override
