@@ -1,14 +1,15 @@
 package ru.javawebinar.topjava.repository.inmemory;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.MealsUtil;
 
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Repository
 public class InMemoryMealRepository implements MealRepository {
@@ -17,7 +18,7 @@ public class InMemoryMealRepository implements MealRepository {
 
     {
         MealsUtil.meals.forEach(meal -> save(meal, 1));
-        MealsUtil.mealsAdmin.forEach(meal -> save(meal, 2));
+        MealsUtil.adminMeals.forEach(meal -> save(meal, 2));
     }
 
     @Override
@@ -33,18 +34,24 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     @Override
-    public boolean delete(int id, int idUser) {
-        return repository.get(idUser).remove(id) != null;
+    public boolean delete(int id, int userId) {
+        Map<Integer, Meal> meals = repository.get(userId);
+        return meals != null && meals.remove(id) != null;
     }
 
     @Override
-    public Meal get(int id, int idUser) {
-        return repository.get(idUser).get(id);
+    public Meal get(int id, int userId) {
+        Map<Integer, Meal> meals = repository.get(userId);
+        return meals == null ? null : meals.get(id);
     }
 
     @Override
-    public Collection<Meal> getAll(int idUser) {
-        return repository.get(idUser).values();
+    public List<Meal> getAll(int userId) {
+        Map<Integer, Meal> meals = repository.get(userId);
+        return meals == null ? new ArrayList<>() :
+                repository.get(userId).values().stream()
+                .sorted(Comparator.comparing(Meal::getDateTime).reversed())
+                .collect(Collectors.toList());
     }
 }
 
