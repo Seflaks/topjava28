@@ -4,6 +4,7 @@ import ru.javawebinar.topjava.model.Meal;
 
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 
@@ -30,11 +31,15 @@ public class MealTestData {
     );
 
     public static Meal getNew() {
-        return new Meal(null, LocalDateTime.now(), "new", 752);
+        return new Meal(null, LocalDateTime.of(2023, Month.FEBRUARY, 22, 23, 06), "new", 752);
     }
 
     public static void assertMatch(Meal actual, Meal expected) {
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
+    }
+
+    public static Meal getUpdated() {
+        return new Meal(USER_MEAL_ID, meals.get(0).getDateTime().minus(5, ChronoUnit.DAYS), "Update meal", 555);
     }
 
 }
