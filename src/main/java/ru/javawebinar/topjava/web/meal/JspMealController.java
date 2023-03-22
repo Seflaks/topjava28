@@ -1,7 +1,5 @@
 package ru.javawebinar.topjava.web.meal;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,32 +18,27 @@ import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalTime;
 @Controller
 @RequestMapping("/meals")
 public class JspMealController extends AbstractMealController {
-    private static final Logger log = LoggerFactory.getLogger(JspMealController.class);
 
     @GetMapping("/delete")
     public String delete(HttpServletRequest request) {
-        log.info("delete");
         super.delete(getId(request));
         return "redirect:/meals";
     }
 
     @GetMapping("/update")
     public String update(HttpServletRequest request, Model model) {
-        log.info("users");
         model.addAttribute("meal", super.get(getId(request)));
         return "mealForm";
     }
 
     @GetMapping("/create")
     public String create(Model model) {
-        log.info("create");
-        model.addAttribute("meal", new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), "", 1000));
+        model.addAttribute("meal", new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000));
         return "mealForm";
     }
 
     @PostMapping
     public String updateOrCreate(HttpServletRequest request) {
-        log.info("update create");
         Meal meal = new Meal(LocalDateTime.parse(request.getParameter("dateTime")),
                 request.getParameter("description"),
                 Integer.parseInt(request.getParameter("calories")));
@@ -58,8 +51,7 @@ public class JspMealController extends AbstractMealController {
     }
 
     @GetMapping("/filter")
-    public String getBeetween(HttpServletRequest request, Model model) {
-        log.info("filter");
+    public String getBetween(HttpServletRequest request, Model model) {
         model.addAttribute("meals", super.getBetween(parseLocalDate(request.getParameter("startDate")),
                 parseLocalTime(request.getParameter("startTime")),
                 parseLocalDate(request.getParameter("endDate")),
