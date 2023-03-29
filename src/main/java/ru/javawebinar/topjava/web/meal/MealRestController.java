@@ -1,11 +1,15 @@
 package ru.javawebinar.topjava.web.meal;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealTo;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -42,18 +46,29 @@ public class MealRestController extends AbstractMealController {
         super.update(meal, id);
     }
 
-    @Override
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Meal create(@RequestBody Meal meal) {
-        return super.create(meal);
+    public ResponseEntity<Meal> createWithLocation(@RequestBody Meal meal) {
+        Meal created = super.create(meal);
+        URI uriOfNewResourse = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path(REST_URL + "/{id}")
+                .buildAndExpand(created.getId()).toUri();
+        return ResponseEntity.created(uriOfNewResourse).body(created);
     }
 
     @GetMapping("/between")
     public List<MealTo> getBetween(
-            @RequestParam LocalDate startDate,
-            @RequestParam LocalTime startTime,
-            @RequestParam LocalDate endDate,
-            @RequestParam LocalTime endTime) {
-        return super.getBetween(startDate, startTime, endDate, endTime);
+            @RequestParam
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+                    LocalDate startdate,
+            @RequestParam
+            @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
+                    LocalTime starttime,
+            @RequestParam
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+                    LocalDate enddate,
+            @RequestParam
+            @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
+                    LocalTime endtime) {
+        return super.getBetween(startdate, starttime, enddate, endtime);
     }
 }
